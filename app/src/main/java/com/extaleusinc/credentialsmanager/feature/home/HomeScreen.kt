@@ -1,4 +1,4 @@
-package com.extaleusinc.credentialsmanager.home
+package com.extaleusinc.credentialsmanager.feature.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,13 +33,14 @@ fun Home(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    Home(navController = navController, state = state)
+    Home(navController = navController, state = state, onAction = viewModel::processAction)
 }
 
 @Composable
 fun Home(
     navController: NavController,
-    state: HomeState
+    state: HomeState,
+    onAction: (HomeAction) -> Unit
 ) {
     Column(Modifier.fillMaxSize()) {
         Box(
@@ -56,21 +58,24 @@ fun Home(
 
         HorizontalDivider()
 
-        LazyColumn(
-            Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .background(color = MAIN_COLOR)
-        ) {
-            item {
-                Folder(state.hello)
+        if (state.foldersTree != null) {
+            LazyColumn(
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .background(color = MAIN_COLOR)
+            ) {
+                items(state.foldersTree.folders) { folder ->
+                    Folder(folder, navController, onAction)
+                }
             }
-            item {
-                Folder(state.hello)
-            }
-            item {
-                Folder(state.hello)
-            }
+        } else {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .background(color = MAIN_COLOR)
+            )
         }
 
         HorizontalDivider()

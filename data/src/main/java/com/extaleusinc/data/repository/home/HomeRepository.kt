@@ -1,5 +1,7 @@
 package com.extaleusinc.data.repository.home
 
-interface HomeRepository {
+import com.extaleusinc.data.model.FoldersModel
 
+interface HomeRepository {
+    fun getFolders(): Result<FoldersModel>
 }

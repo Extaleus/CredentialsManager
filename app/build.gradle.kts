@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+    implementation(libs.state.events)
 
     implementation(project(":data"))
 
