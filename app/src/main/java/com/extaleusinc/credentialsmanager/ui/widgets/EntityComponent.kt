@@ -4,6 +4,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,7 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,8 +20,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -63,9 +64,49 @@ fun Entity(entity: EntityModel, navController: NavController, onAction: (HomeAct
     Column(
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = 10.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .background(TOP_BAR_COLOR)
+//            .padding(horizontal = 10.dp)
+//            .clip(RoundedCornerShape(10.dp))
+            .background(Color.Black.copy(alpha = 0.3f))
+//            .border(4.dp, color = Color.White.copy(alpha = 0.1f))
+            .drawBehind {
+                val strokeWidth = 4.dp.toPx()
+//                drawLine(
+//                    color = Color.White.copy(alpha = 0.1f),
+//                    start = Offset(0f, strokeWidth / 2),
+//                    end = Offset(
+//                        size.width,
+//                        strokeWidth / 2
+//                    ),
+//                    strokeWidth = strokeWidth
+//                )
+                drawLine(
+                    color = Color.White.copy(alpha = 0.1f),
+                    start = Offset(strokeWidth / 2, 0f),
+                    end = Offset(
+                        strokeWidth / 2,
+                        size.height
+                    ),
+                    strokeWidth = strokeWidth
+                )
+                drawLine(
+                    color = Color.White.copy(alpha = 0.1f),
+                    start = Offset(size.width - strokeWidth / 2, 0f),
+                    end = Offset(
+                        size.width - strokeWidth / 2,
+                        size.height
+                    ),
+                    strokeWidth = strokeWidth
+                )
+//                drawLine(
+//                    color = Color.White.copy(alpha = 0.1f),
+//                    start = Offset(strokeWidth, size.height - strokeWidth / 4),
+//                    end = Offset(
+//                        size.width - strokeWidth,
+//                        size.height - strokeWidth / 4
+//                    ),
+//                    strokeWidth = strokeWidth
+//                )
+            }
     ) {
         Row(
             Modifier
@@ -78,16 +119,16 @@ fun Entity(entity: EntityModel, navController: NavController, onAction: (HomeAct
                     .weight(1f)
                     .padding(10.dp)
             ) {
-                Text(entity.title, style = TextStyle(fontSize = 24.sp))
-                Text(entity.username)
+                Text(entity.title, style = TextStyle(fontSize = 24.sp), color = Color.White)
+                Text(entity.username, color = Color.White)
             }
             Image(
                 painter = if (entityDetailsOpen) painterResource(id = R.drawable.keyboard_arrow_down_24dp)
                 else painterResource(id = R.drawable.keyboard_arrow_left_24dp),
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(color = Color.Black),
-                modifier = Modifier
-                    .size(width = 32.dp, height = 32.dp)
+//                colorFilter = ColorFilter.tint(color = Color.Black),
+                modifier = Modifier.padding(10.dp)
+//                    .size(width = 32.dp, height = 32.dp)
             )
         }
         if (entityDetailsOpen) {

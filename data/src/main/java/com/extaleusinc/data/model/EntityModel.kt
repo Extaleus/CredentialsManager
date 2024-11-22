@@ -7,5 +7,5 @@ data class EntityModel(
     val password: String,
     val url: String,
     val description: String,
-    val favorite: Boolean,
+    val favorite: Boolean
 )

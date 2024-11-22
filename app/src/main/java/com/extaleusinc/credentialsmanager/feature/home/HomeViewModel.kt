@@ -69,7 +69,7 @@ class HomeViewModel @Inject constructor(
         val foldersWithEntitiesMutex = Mutex()
 
         val getEntitiesByFolderJob = viewModelScope.launch(Dispatchers.IO) {
-            state.value.foldersWithEntities.forEach { folder ->
+            state.value.foldersWithEntities.forEachIndexed { index, folder ->
                 repository.getEntitiesByEachFolder(folder.folder.id).onSuccess { result ->
                     foldersWithEntitiesMutex.withLock {
                         withContext(Dispatchers.Main) {
@@ -79,7 +79,8 @@ class HomeViewModel @Inject constructor(
                                         if (currentFolderWithEntities.folder.id == folder.folder.id) {
                                             currentFolderWithEntities.copy(
                                                 folder = currentFolderWithEntities.folder.copy(
-                                                    isLoading = false
+                                                    isLoading = false,
+                                                    selected = index == 0
                                                 ),
                                                 entities = result.entities ?: emptyList()
                                             )
@@ -111,6 +112,30 @@ class HomeViewModel @Inject constructor(
     fun processAction(action: HomeAction) {
         when (action) {
             HomeAction.ConsumeError -> TODO()
+
+            is HomeAction.ChangeSelectedFolder -> {
+                _state.update {
+                    it.copy(
+                        foldersWithEntities = it.foldersWithEntities.map { currentFolderWithEntities ->
+                            if (currentFolderWithEntities.folder == action.folder) {
+                                currentFolderWithEntities.copy(
+                                    folder = currentFolderWithEntities.folder.copy(
+                                        selected = true
+                                    ),
+                                    entities = currentFolderWithEntities.entities
+                                )
+                            } else {
+                                currentFolderWithEntities.copy(
+                                    folder = currentFolderWithEntities.folder.copy(
+                                        selected = false
+                                    ),
+                                    entities = currentFolderWithEntities.entities
+                                )
+                            }
+                        }.toMutableList()
+                    )
+                }
+            }
         }
     }
 
@@ -132,4 +157,5 @@ data class HomeState(
 
 sealed class HomeAction {
     data object ConsumeError : HomeAction()
+    data class ChangeSelectedFolder(val folder: FolderModel) : HomeAction()
 }
