@@ -2,7 +2,7 @@ package com.extaleusinc.credentialsmanager.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.extaleusinc.data.model.EntitiesModel
+import com.extaleusinc.data.model.EntityModel
 import com.extaleusinc.data.model.FolderModel
 import com.extaleusinc.data.repository.home.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,19 +37,14 @@ class HomeViewModel @Inject constructor(
             }
             repository.getAllFolders().onSuccess { result ->
                 withContext(Dispatchers.Main) {
-                    _state.update {
-                        it.copy(
-                            folders = result.folders
-                        )
-                    }
-                    if (state.value.folders.isNotEmpty()) {
-                        getEntitiesByFolder()
-                    } else {
+                    if (result.folders.isNullOrEmpty()) {
                         _state.update {
                             it.copy(
                                 isLoading = false
                             )
                         }
+                    } else {
+                        getEntitiesByEachFolder(result.folders!!)
                     }
                 }
             }.onFailure {
@@ -62,20 +57,36 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun getEntitiesByFolder() {
+    private fun getEntitiesByEachFolder(folders: List<FolderModel>) {
+        _state.update {
+            it.copy(
+                foldersWithEntities = folders.map { folder ->
+                    FolderWithEntities(folder.copy(isLoading = true), emptyList())
+                }.toMutableList(),
+            )
+        }
+
         val foldersWithEntitiesMutex = Mutex()
 
         val getEntitiesByFolderJob = viewModelScope.launch(Dispatchers.IO) {
-            state.value.folders.forEach { folder ->
-                repository.getEntitiesByFolder(folder.id).onSuccess { result ->
+            state.value.foldersWithEntities.forEach { folder ->
+                repository.getEntitiesByEachFolder(folder.folder.id).onSuccess { result ->
                     foldersWithEntitiesMutex.withLock {
                         withContext(Dispatchers.Main) {
                             _state.update {
                                 it.copy(
-                                    foldersWithEntities = it.foldersWithEntities.toMutableList()
-                                        .also { list ->
-                                            list.add(Pair(folder, result))
+                                    foldersWithEntities = it.foldersWithEntities.map { currentFolderWithEntities ->
+                                        if (currentFolderWithEntities.folder.id == folder.folder.id) {
+                                            currentFolderWithEntities.copy(
+                                                folder = currentFolderWithEntities.folder.copy(
+                                                    isLoading = false
+                                                ),
+                                                entities = result.entities ?: emptyList()
+                                            )
+                                        } else {
+                                            currentFolderWithEntities
                                         }
+                                    }.toMutableList()
                                 )
                             }
                         }
@@ -84,8 +95,9 @@ class HomeViewModel @Inject constructor(
             }
         }
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             getEntitiesByFolderJob.join()
+
             withContext(Dispatchers.Main) {
                 _state.update {
                     it.copy(
@@ -104,11 +116,14 @@ class HomeViewModel @Inject constructor(
 
 }
 
+data class FolderWithEntities(
+    val folder: FolderModel,
+    val entities: List<EntityModel>
+)
 
 data class HomeState(
     val isLoading: Boolean = false,
-    val folders: List<FolderModel> = emptyList(),
-    val foldersWithEntities: MutableList<Pair<FolderModel, EntitiesModel>> = emptyList<Pair<FolderModel, EntitiesModel>>().toMutableList(),
+    val foldersWithEntities: MutableList<FolderWithEntities> = emptyList<FolderWithEntities>().toMutableList(),
 ) {
     companion object {
         fun initial() = HomeState()

@@ -1,14 +1,9 @@
 package com.extaleusinc.data.network.api
 
-import com.extaleusinc.data.base.Api.API_CREATE_FOLDER
-import com.extaleusinc.data.base.Api.API_DELETE_FOLDER_BY_ID
 import com.extaleusinc.data.base.Api.API_GET_ALL_ENTITIES
 import com.extaleusinc.data.base.Api.API_GET_ALL_FOLDERS
-import com.extaleusinc.data.base.Api.API_GET_FOLDER_BY_ID
 import com.extaleusinc.data.base.Api.API_SIGN_IN
 import com.extaleusinc.data.base.Api.API_SIGN_UP
-import com.extaleusinc.data.base.Api.API_UPDATE_FOLDER_BY_ID
-import com.extaleusinc.data.model.EntitiesModel
 import com.extaleusinc.data.network.api.request.SignInRequest
 import com.extaleusinc.data.network.api.request.SignUpRequest
 import com.extaleusinc.data.network.api.response.EntitiesResponse
@@ -17,10 +12,8 @@ import com.extaleusinc.data.network.api.response.SignInResponse
 import com.extaleusinc.data.network.api.response.SignUpResponse
 import com.extaleusinc.data.utils.RequiresToken
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.PUT
 import retrofit2.http.Path
 
 internal interface ApiService {
@@ -47,7 +40,7 @@ internal interface ApiService {
 
     @RequiresToken
     @GET(API_GET_ALL_ENTITIES)
-    suspend fun getEntitiesByFolder(@Path("id") id: Int): Result<EntitiesResponse>
+    suspend fun getEntitiesByEachFolder(@Path("id") id: Int): Result<EntitiesResponse>
 
 
 }

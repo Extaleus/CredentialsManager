@@ -39,8 +39,8 @@ internal class HomeRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getEntitiesByFolder(folderId: Int): Result<EntitiesModel> {
-        return apiService.getEntitiesByFolder(folderId).map {
+    override suspend fun getEntitiesByEachFolder(folderId: Int): Result<EntitiesModel> {
+        return apiService.getEntitiesByEachFolder(folderId).map {
             it.toModel()
         }
     }

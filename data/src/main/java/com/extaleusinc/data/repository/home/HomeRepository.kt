@@ -1,7 +1,6 @@
 package com.extaleusinc.data.repository.home
 
 import com.extaleusinc.data.model.EntitiesModel
-import com.extaleusinc.data.model.EntityModel
 import com.extaleusinc.data.model.FoldersModel
 import com.extaleusinc.data.model.SignInModel
 import com.extaleusinc.data.model.SignUpModel
@@ -15,7 +14,7 @@ interface HomeRepository {
 
     suspend fun getAllFolders(): Result<FoldersModel>
 
-    suspend fun getEntitiesByFolder(folderId: Int): Result<EntitiesModel>
+    suspend fun getEntitiesByEachFolder(folderId: Int): Result<EntitiesModel>
 }
 
 

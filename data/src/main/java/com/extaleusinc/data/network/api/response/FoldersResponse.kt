@@ -4,7 +4,7 @@ import com.extaleusinc.data.model.FolderModel
 import com.extaleusinc.data.model.FoldersModel
 
 data class FoldersResponse(
-    val data: List<FolderModel>
+    val data: List<FolderModel>?
 ) {
     fun toModel() = FoldersModel(
         folders = data

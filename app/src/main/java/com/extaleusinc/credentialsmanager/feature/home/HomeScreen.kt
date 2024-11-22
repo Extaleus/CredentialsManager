@@ -66,8 +66,8 @@ fun Home(
                     .weight(1f)
                     .background(color = MAIN_COLOR)
             ) {
-                items(state.foldersWithEntities) { folder ->
-                    Folder(folder, navController, onAction)
+                items(state.foldersWithEntities) { folderWithEntities ->
+                    Folder(folderWithEntities, navController, onAction)
                     Spacer(Modifier.height(10.dp))
                 }
             }
