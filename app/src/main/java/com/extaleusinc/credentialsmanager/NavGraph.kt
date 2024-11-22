@@ -3,13 +3,16 @@ package com.extaleusinc.credentialsmanager
 import kotlinx.serialization.Serializable
 
 @Serializable
-object Home
+object Auth
 
 @Serializable
-data class EntityDetails(
-    val entityName: String,
-    val username: String,
-    val password: String,
-    val url: String,
-    val notes: String
-)
+object Home
+
+//@Serializable
+//data class EntityDetails(
+//    val entityName: String,
+//    val username: String,
+//    val password: String,
+//    val url: String,
+//    val notes: String
+//)

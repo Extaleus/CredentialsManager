@@ -3,6 +3,7 @@ package com.extaleusinc.credentialsmanager.feature.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -58,15 +59,16 @@ fun Home(
 
         HorizontalDivider()
 
-        if (state.foldersTree != null) {
+        if (state.foldersWithEntities.isNotEmpty()) {
             LazyColumn(
                 Modifier
                     .fillMaxWidth()
                     .weight(1f)
                     .background(color = MAIN_COLOR)
             ) {
-                items(state.foldersTree.folders) { folder ->
+                items(state.foldersWithEntities) { folder ->
                     Folder(folder, navController, onAction)
+                    Spacer(Modifier.height(10.dp))
                 }
             }
         } else {
